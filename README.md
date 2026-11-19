@@ -8,6 +8,7 @@ A low-power embedded system for the ATmega328P, written in bare-metal C and simu
 2. **Sleep:** when the counter reaches 5, the firmware turns the LED off, disables the ADC, selects Power-down mode and executes `SLEEP`. The CPU, main oscillator and Timer1 all stop.
 3. **Wake-up:** pressing the button on PD2 pulls INT0 low. Low-level sensing is the only INT0 mode that works in Power-down, because edge detection needs a clock that is stopped. The ISR resets the counter, the program continues after `sleep_cpu()`, and the buzzer on PB1 beeps for 200 ms.
 
+![Flowchart](docs/flowchart.jpg)
 
 ## Register-level details
 
@@ -25,14 +26,31 @@ A low-power embedded system for the ATmega328P, written in bare-metal C and simu
 
 `PRR` is deliberately not used. In Power-down the main clock is already stopped, so there is nothing for it to gate.
 
-## Build
+## Circuit (Proteus)
 
-Compile `src/main.c` with `avr-gcc` for the ATmega328P with `F_CPU=8000000UL` and produce a `.hex` file. The timing values (`F_CPU`, the USART divisor and `OCR1A`) assume an **8 MHz** clock. For a 16 MHz board they would need to be recalculated.
+![Circuit](docs/circuit.jpg)
+
+| Part | Connection |
+|---|---|
+| LED (with 330 Ω resistor) | PB0 |
+| Push button | PD2 (INT0), internal pull-up enabled |
+| Buzzer | PB1, switched through MOSFET Q13 (2SK1058) |
+| Crystal | 8 MHz on XTAL1/XTAL2 with load capacitor |
+| Virtual Terminal | PD0/PD1 (USART) |
+
+## Run it
+
+1. Compile `src/main.c` with `avr-gcc` for the ATmega328P with `F_CPU=8000000UL`, or build it in your preferred AVR toolchain, and produce a `.hex` file.
+2. Open `proteus/sleep-modes.pdsprj` in Proteus, load the `.hex` into the ATmega328P, and run the simulation. Press the button to wake the chip once it has gone to sleep.
+
+The timing values (`F_CPU`, the USART divisor and `OCR1A`) assume an **8 MHz** clock. For a 16 MHz board they would need to be recalculated.
 
 ## Repository layout
 
 ```
-src/main.c   firmware
+src/main.c                  firmware
+proteus/sleep-modes.pdsprj  Proteus simulation project
+docs/                       circuit and flowchart
 ```
 
 ## Tech
