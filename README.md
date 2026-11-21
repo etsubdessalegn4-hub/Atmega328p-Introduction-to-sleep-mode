@@ -2,6 +2,16 @@
 
 A low-power embedded system for the ATmega328P, written in bare-metal C and simulated in Proteus VSM. The LED blinks while the MCU is awake. After 5 seconds with no button press the firmware puts the chip into **Power-down**, the deepest sleep mode. Pressing a button wakes it through the external interrupt INT0, and the program resumes right after the sleep instruction, not from a reset.
 
+## Demo
+
+[`media/demo.mp4`](media/demo.mp4) is a short screen recording of the simulation: normal operation, entering sleep, and waking up.
+
+| Normal operation | Power-down | Wake-up |
+|---|---|---|
+| ![Normal operation](docs/sim-normal-operation.jpg) | ![Power-down](docs/sim-power-down.jpg) | ![Wake-up](docs/sim-wake-up.jpg) |
+
+The Virtual Terminal prints `System started - NORMAL OPERATION`, then `Entering POWER-DOWN sleep...`, then `Woke up! Resuming normal operation.`
+
 ## How it works
 
 1. **Normal operation:** the LED on PB0 blinks (300 ms on, 300 ms off). Timer1 fires once per second and increments an inactivity counter.
@@ -48,9 +58,10 @@ The timing values (`F_CPU`, the USART divisor and `OCR1A`) assume an **8 MHz** c
 ## Repository layout
 
 ```
-src/main.c                  firmware
-proteus/sleep-modes.pdsprj  Proteus simulation project
-docs/                       circuit and flowchart
+src/main.c                 firmware
+proteus/sleep-modes.pdsprj Proteus simulation project
+docs/                      circuit, flowchart and simulation screenshots
+media/demo.mp4             simulation screen recording
 ```
 
 ## Tech
